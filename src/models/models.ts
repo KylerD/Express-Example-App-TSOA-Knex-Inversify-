@@ -16,6 +16,7 @@ export interface WorkStatus {
 export interface Party {
     party_id: number
     party_type_id: number
+    name: string
 }
 
 export interface PartyType {

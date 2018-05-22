@@ -5,7 +5,10 @@ import {RegisterRoutes} from './routes'
 import * as swaggerUi from 'swagger-ui-express'
 
 // controllers need to be referenced in order to get crawled by the generator
-import './controllers/usersController'
+import './controllers/partyController'
+import './controllers/partyTypeController'
+import './controllers/workController'
+import './controllers/workStatusController'
 
 const app = express()
 

@@ -1,38 +1,74 @@
 /* tslint:disable */
 import { Controller, ValidateParam, FieldErrors, ValidateError, TsoaRoute } from 'tsoa';
 import { iocContainer } from './ioc';
-import { UsersController } from './controllers/usersController';
+import { PartyController } from './controllers/partyController';
+import { PartyTypeController } from './controllers/partyTypeController';
+import { WorkController } from './controllers/workController';
+import { WorkStatusController } from './controllers/workStatusController';
 
 const models: TsoaRoute.Models = {
-    "User": {
+    "Party": {
         "properties": {
-            "id": { "dataType": "double", "required": true },
-            "email": { "dataType": "string", "required": true },
+            "party_id": { "dataType": "double", "required": true },
+            "party_type_id": { "dataType": "double", "required": true },
             "name": { "dataType": "string", "required": true },
-            "status": { "dataType": "string" },
-            "phoneNumbers": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
         },
     },
-    "UserCreationRequest": {
+    "PartyCreateRequest": {
         "properties": {
-            "email": { "dataType": "string", "required": true },
+            "party_type_id": { "dataType": "double", "required": true },
             "name": { "dataType": "string", "required": true },
-            "phoneNumbers": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
         },
     },
-    "UserStatus": {
-        "enums": ["ACTIVE", "DISABLED"],
-    },
-    "UserChangeOfStatusRequest": {
+    "PartyType": {
         "properties": {
-            "id": { "dataType": "double", "required": true },
-            "status": { "ref": "UserStatus", "required": true },
+            "party_type_id": { "dataType": "double", "required": true },
+            "name": { "dataType": "string", "required": true },
+            "enabled": { "dataType": "boolean", "required": true },
+        },
+    },
+    "PartyTypeCreateRequest": {
+        "properties": {
+            "name": { "dataType": "string", "required": true },
+            "enabled": { "dataType": "boolean", "required": true },
+        },
+    },
+    "Work": {
+        "properties": {
+            "work_id": { "dataType": "double", "required": true },
+            "reference": { "dataType": "string" },
+            "party_id": { "dataType": "double", "required": true },
+            "work_status_id": { "dataType": "double", "required": true },
+            "date_created": { "dataType": "datetime", "required": true },
+            "date_modified": { "dataType": "datetime", "required": true },
+        },
+    },
+    "WorkCreateRequest": {
+        "properties": {
+            "reference": { "dataType": "string" },
+            "party_id": { "dataType": "double", "required": true },
+            "work_status_id": { "dataType": "double", "required": true },
+            "date_created": { "dataType": "datetime" },
+            "date_modified": { "dataType": "datetime" },
+        },
+    },
+    "WorkStatus": {
+        "properties": {
+            "work_status_id": { "dataType": "double", "required": true },
+            "name": { "dataType": "string", "required": true },
+            "enabled": { "dataType": "boolean", "required": true },
+        },
+    },
+    "WorkStatusCreateRequest": {
+        "properties": {
+            "name": { "dataType": "string", "required": true },
+            "enabled": { "dataType": "boolean", "required": true },
         },
     },
 };
 
 export function RegisterRoutes(app: any) {
-    app.get('/api/Users',
+    app.get('/api/Party',
         function(request: any, response: any, next: any) {
             const args = {
             };
@@ -44,7 +80,7 @@ export function RegisterRoutes(app: any) {
                 return next(err);
             }
 
-            const controller = iocContainer.get<UsersController>(UsersController);
+            const controller = iocContainer.get<PartyController>(PartyController);
             if (typeof controller['setStatus'] === 'function') {
                 (<any>controller).setStatus(undefined);
             }
@@ -53,10 +89,10 @@ export function RegisterRoutes(app: any) {
             const promise = controller.getAll.apply(controller, validatedArgs);
             promiseHandler(controller, promise, response, next);
         });
-    app.get('/api/Users/:id',
+    app.get('/api/Party/:partyId',
         function(request: any, response: any, next: any) {
             const args = {
-                id: { "in": "path", "name": "id", "required": true, "dataType": "double" },
+                partyId: { "in": "path", "name": "partyId", "required": true, "dataType": "double" },
             };
 
             let validatedArgs: any[] = [];
@@ -66,19 +102,19 @@ export function RegisterRoutes(app: any) {
                 return next(err);
             }
 
-            const controller = iocContainer.get<UsersController>(UsersController);
+            const controller = iocContainer.get<PartyController>(PartyController);
             if (typeof controller['setStatus'] === 'function') {
                 (<any>controller).setStatus(undefined);
             }
 
 
-            const promise = controller.getUser.apply(controller, validatedArgs);
+            const promise = controller.getParty.apply(controller, validatedArgs);
             promiseHandler(controller, promise, response, next);
         });
-    app.post('/api/Users',
+    app.post('/api/Party',
         function(request: any, response: any, next: any) {
             const args = {
-                requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserCreationRequest" },
+                requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "PartyCreateRequest" },
             };
 
             let validatedArgs: any[] = [];
@@ -88,19 +124,18 @@ export function RegisterRoutes(app: any) {
                 return next(err);
             }
 
-            const controller = iocContainer.get<UsersController>(UsersController);
+            const controller = iocContainer.get<PartyController>(PartyController);
             if (typeof controller['setStatus'] === 'function') {
                 (<any>controller).setStatus(undefined);
             }
 
 
-            const promise = controller.createUser.apply(controller, validatedArgs);
+            const promise = controller.createParty.apply(controller, validatedArgs);
             promiseHandler(controller, promise, response, next);
         });
-    app.post('/api/Users/:id/ChangeOfStatus',
+    app.get('/api/PartyType',
         function(request: any, response: any, next: any) {
             const args = {
-                requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "UserChangeOfStatusRequest" },
             };
 
             let validatedArgs: any[] = [];
@@ -110,13 +145,187 @@ export function RegisterRoutes(app: any) {
                 return next(err);
             }
 
-            const controller = iocContainer.get<UsersController>(UsersController);
+            const controller = iocContainer.get<PartyTypeController>(PartyTypeController);
             if (typeof controller['setStatus'] === 'function') {
                 (<any>controller).setStatus(undefined);
             }
 
 
-            const promise = controller.changeOfStatus.apply(controller, validatedArgs);
+            const promise = controller.getAll.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/PartyType/:partyTypeId',
+        function(request: any, response: any, next: any) {
+            const args = {
+                partyTypeId: { "in": "path", "name": "partyTypeId", "required": true, "dataType": "double" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = iocContainer.get<PartyTypeController>(PartyTypeController);
+            if (typeof controller['setStatus'] === 'function') {
+                (<any>controller).setStatus(undefined);
+            }
+
+
+            const promise = controller.getPartyType.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.post('/api/PartyType',
+        function(request: any, response: any, next: any) {
+            const args = {
+                requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "PartyTypeCreateRequest" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = iocContainer.get<PartyTypeController>(PartyTypeController);
+            if (typeof controller['setStatus'] === 'function') {
+                (<any>controller).setStatus(undefined);
+            }
+
+
+            const promise = controller.createPartyType.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/Work',
+        function(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = iocContainer.get<WorkController>(WorkController);
+            if (typeof controller['setStatus'] === 'function') {
+                (<any>controller).setStatus(undefined);
+            }
+
+
+            const promise = controller.getAll.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/Work/:workId',
+        function(request: any, response: any, next: any) {
+            const args = {
+                workId: { "in": "path", "name": "workId", "required": true, "dataType": "double" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = iocContainer.get<WorkController>(WorkController);
+            if (typeof controller['setStatus'] === 'function') {
+                (<any>controller).setStatus(undefined);
+            }
+
+
+            const promise = controller.getWork.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.post('/api/Work',
+        function(request: any, response: any, next: any) {
+            const args = {
+                requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "WorkCreateRequest" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = iocContainer.get<WorkController>(WorkController);
+            if (typeof controller['setStatus'] === 'function') {
+                (<any>controller).setStatus(undefined);
+            }
+
+
+            const promise = controller.createWork.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/WorkStatus',
+        function(request: any, response: any, next: any) {
+            const args = {
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = iocContainer.get<WorkStatusController>(WorkStatusController);
+            if (typeof controller['setStatus'] === 'function') {
+                (<any>controller).setStatus(undefined);
+            }
+
+
+            const promise = controller.getAll.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/api/WorkStatus/:workStatusId',
+        function(request: any, response: any, next: any) {
+            const args = {
+                workStatusId: { "in": "path", "name": "workStatusId", "required": true, "dataType": "double" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = iocContainer.get<WorkStatusController>(WorkStatusController);
+            if (typeof controller['setStatus'] === 'function') {
+                (<any>controller).setStatus(undefined);
+            }
+
+
+            const promise = controller.getWorkStatus.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.post('/api/WorkStatus',
+        function(request: any, response: any, next: any) {
+            const args = {
+                requestBody: { "in": "body", "name": "requestBody", "required": true, "ref": "WorkStatusCreateRequest" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = iocContainer.get<WorkStatusController>(WorkStatusController);
+            if (typeof controller['setStatus'] === 'function') {
+                (<any>controller).setStatus(undefined);
+            }
+
+
+            const promise = controller.createWorkStatus.apply(controller, validatedArgs);
             promiseHandler(controller, promise, response, next);
         });
 

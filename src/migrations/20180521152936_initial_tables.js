@@ -41,8 +41,8 @@ exports.up = function (knex, Promise) {
                 .inTable('work_status');
             table.integer('party_id').unsigned().notNullable().references('party_id')
                 .inTable('party');
-            table.dateTime('date_created').notNullable();
-            table.dateTime('date_modified').notNullable();
+            table.dateTime('date_created').notNullable().defaultTo(knex.fn.now());
+            table.dateTime('date_modified').notNullable().defaultTo(knex.fn.now());
         })
     ]);
 }
