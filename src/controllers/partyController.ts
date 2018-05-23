@@ -3,14 +3,14 @@ import { inject, provideSingleton } from '../ioc'
 import { Party } from '../models/models'
 import { PartyCreateRequest } from '../models/requestModels'
 import { TYPES } from '../types'
-import { KnexService } from '../services/service'
+import { Service } from '../services/service'
 import { named } from 'inversify'
 
 
 @Route('Party')
 @provideSingleton(PartyController)
 export class PartyController extends Controller {
-    @inject(TYPES.KnexService) @named('partyController') service: KnexService<Party, PartyCreateRequest>
+    @inject(TYPES.Service) @named('partyController') service: Service<Party, PartyCreateRequest>
 
     constructor() {
         super()

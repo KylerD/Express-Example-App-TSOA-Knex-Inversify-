@@ -5,7 +5,7 @@ import * as Knex from 'knex'
 import { development } from './knexfile'
 import { Controller } from 'tsoa'
 import { TYPES } from './types'
-import { KnexService } from './services/service'
+import { KnexService, Service } from './services/service'
 
 // Needed to make controller injectable for extended Singleton class
 import { decorate, injectable } from 'inversify'
@@ -18,22 +18,22 @@ const iocContainer = new Container()
 let knex: Knex = Knex(development)
 iocContainer.bind<Knex>('knex').toConstantValue(knex)
 
-iocContainer.bind<KnexService<Party, PartyCreateRequest>>(TYPES.KnexService).to(KnexService)
+iocContainer.bind<Service<Party, PartyCreateRequest>>(TYPES.Service).to(KnexService)
     .whenTargetNamed('partyController')
 iocContainer.bind<string>('table').toConstantValue('party').whenParentNamed('partyController')
 iocContainer.bind<string>('id').toConstantValue('party_id').whenParentNamed('partyController')
 
-iocContainer.bind<KnexService<PartyType, PartyTypeCreateRequest>>(TYPES.KnexService).to(KnexService)
+iocContainer.bind<Service<PartyType, PartyTypeCreateRequest>>(TYPES.Service).to(KnexService)
     .whenTargetNamed('partyTypeController')
 iocContainer.bind<string>('table').toConstantValue('party_type').whenParentNamed('partyTypeController')
 iocContainer.bind<string>('id').toConstantValue('party_type_id').whenParentNamed('partyTypeController')
 
-iocContainer.bind<KnexService<Work, WorkCreateRequest>>(TYPES.KnexService).to(KnexService)
+iocContainer.bind<Service<Work, WorkCreateRequest>>(TYPES.Service).to(KnexService)
     .whenTargetNamed('workController')
 iocContainer.bind<string>('table').toConstantValue('work').whenParentNamed('workController')
 iocContainer.bind<string>('id').toConstantValue('work_id').whenParentNamed('workController')
 
-iocContainer.bind<KnexService<WorkStatus, WorkStatusCreateRequest>>(TYPES.KnexService).to(KnexService)
+iocContainer.bind<Service<WorkStatus, WorkStatusCreateRequest>>(TYPES.Service).to(KnexService)
     .whenTargetNamed('workStatusController')
 iocContainer.bind<string>('table').toConstantValue('work_status').whenParentNamed('workStatusController')
 iocContainer.bind<string>('id').toConstantValue('work_status_id').whenParentNamed('workStatusController')

@@ -1,5 +1,5 @@
 const TYPES = {
-    KnexService: Symbol.for('KnexService')
+    Service: Symbol.for('Service')
 }
 
 export { TYPES }

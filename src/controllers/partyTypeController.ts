@@ -1,6 +1,6 @@
 import { Get, Post, Route, Body, SuccessResponse, Controller } from 'tsoa'
 import { inject, provideSingleton } from '../ioc'
-import { KnexService } from '../services/service'
+import { Service } from '../services/service'
 import { PartyTypeCreateRequest } from '../models/requestModels'
 import { PartyType } from '../models/models'
 import { TYPES } from '../types'
@@ -10,7 +10,7 @@ import { named } from 'inversify'
 @Route('PartyType')
 @provideSingleton(PartyTypeController)
 export class PartyTypeController extends Controller {
-    @inject(TYPES.KnexService) @named('partyTypeController') service: KnexService<PartyType, PartyTypeCreateRequest>
+    @inject(TYPES.Service) @named('partyTypeController') service: Service<PartyType, PartyTypeCreateRequest>
 
     constructor() {
         super()
